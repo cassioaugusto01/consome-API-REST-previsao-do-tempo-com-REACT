@@ -33,6 +33,12 @@ function App() {
         você precisa habilitar a localização no browser o/
       </Fragment>
     )
+  } else if (weather == false) {
+    return (
+      <Fragment>
+        Loading...
+      </Fragment>
+    )
   }
     else {
       return (
