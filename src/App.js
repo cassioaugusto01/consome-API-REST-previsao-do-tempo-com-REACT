@@ -1,64 +1,48 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { Component } from 'react';
+import api from './api'
 
-function App() {
-  const [location, setLocation] = useState(false);
-  const [weather, setWeather] = useState(false);
+class App extends Component{
 
-  let getWeather = async (lat, long) => {
-    let res = await axios.get("http://api.openweathermap.org/data/2.5/weather", {
-      params: {
-        lat: lat,
-        lon: long,
-        appid: process.env.REACT_APP_OPEN_WEATHER_KEY,
-        lang: 'pt',
-        units: 'metric'
-      }
-    });
-    setWeather(res.data);
-    console.log(res.data)
+  state= {
+    filmes: [],
   }
 
-  useEffect(()=> {
-    navigator.geolocation.getCurrentPosition((position)=> {
-      getWeather(position.coords.latitude, position.coords.longitude);
-      setLocation(true)
-    })
-  }, [])
-
-
-  if(location == false){
-    return (
-      <Fragment>
-        você precisa habilitar a localização no browser o/
-      </Fragment>
-    )
-  } else if (weather == false) {
-    return (
-      <Fragment>
-        Loading...
-      </Fragment>
-    )
+  async componentDidMount() {
+    const response = await api.get('star%20wars');
+    //console.log(response.data)
+    this.setState({ filmes: response.data});
   }
-    else {
-      return (
-        <Fragment>
-          <h3>clima nas suas coordenada ({weather['weather'][0]['description']})</h3>
-          <hr />
-          <ul>
-            <li> atual: {weather['main']['temp']}º</li>
-            <li> maxima: {weather['main']['temp_max']}º</li>
-            <li> minima: {weather['main']['temp_min']}º</li>
-            <li> pressao: {weather['main']['pressure']} hpa</li>
-            <li> umidade: {weather['main']['humidity']}%</li>
-          </ul>
-        </Fragment>
+
+  render(){
+
+    const { filmes } = this.state;
+
+    return(
+      <div>
+        <h1> listar os filmes </h1>
+        {filmes.map(filme => (
+          <li key={filme.show.id}>
+            <h2><strong>Título: </strong>
+            {filme.show.name}
+            </h2>
+            <p>
+            {filme.show.url}
+            </p>
+          </li>
+        ))}
+      </div>
     );
+  };
+}
+/*
+function App() {
+  return (
+    <div>
+      <h1>Listar</h1>
+    </div>
+  );
 
-    }
   }
-
- 
-
+  */
 
 export default App;
